@@ -1,0 +1,25 @@
+/* .count{
+    height: 200px;
+    width: 200px;
+    color: blue;
+    box-shadow: 5px 5px rgb(241, 241, 241);
+
+} */
+
+.count-container {
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
+  }
+  
+  .count-container > div {
+    background-color:#d4daf3;
+    width: 100px;
+    height: 100px;
+    margin: 4px;
+    border-radius: 10px;
+    text-align: center;
+    line-height: 60px;
+    font-size: 25px;
+    color: blue;
+  }

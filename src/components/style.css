@@ -1,0 +1,22 @@
+.logo{
+    height:60px;
+    width:100px;
+}
+.menu-section{
+   padding: 15px;
+   box-shadow: 5px 5px rgb(241, 241, 241);
+}
+.company{
+    color: black;
+    font-weight: bold;
+}
+Col>span{
+    color: red;
+    padding: 5px;
+    margin-top: 50px;
+    
+}
+.profile{
+    margin-left: 5px;
+    padding-left: 30px;
+}
