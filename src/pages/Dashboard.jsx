@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React, { Component} from 'react';
 import Header from '../components/Header'
 import { Row, Col, Table ,Timeline} from 'antd';
 import './style.css'
@@ -11,6 +11,7 @@ class Dashboard extends Component{
         super(props)
         this.state = {
             shipment_data : [],
+            copy_shipment_data : [],
             DEL:0,
             INT:0,
             OOD:0,
@@ -18,40 +19,58 @@ class Dashboard extends Component{
             NFI:0
         }
     }
+
+    fetchFilterCountData = (status)=>{
+      axios({
+        method: 'post',
+        url: `${BASE_URL}/yogeshwar`,
+        data: {
+          email: 'yogeshwargundale@gmail.com',
+        },
+        headers: {'AUTHORIZATION': 'Bearer tTU3gFVUdP'}
+      }) .then((response) => {debugger
+        const dataobj = [];
+        const result = response.data.data.filter((element,id)=> {
+         return element.current_status_code===status 
+      })
+
+      result.forEach(element=>{
+        dataobj.push({'awbno':element.awbno,'carrier':element.carrier,'from':element.from,'to':element.to,
+        'carrier':element.carrier,'pickup_date':element.pickup_date,'etd':element.extra_fields!==undefined?element.extra_fields.expected_delivery_date:'',
+        'current_status':element.current_status,'scan':element.scan
+         })
+      })
+      this.setState({shipment_data:dataobj,copy_shipment_data:dataobj})
+
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+    }
+
+
     sortShipment = (status)=>{
 
       if(status==='DEL'){
-       const shipmentFilterData = this.state.shipment_data.filter(item=>{
-          return item.current_status==='Delivered';
-        })
-        this.setState({shipment_data:shipmentFilterData})
+      this.fetchFilterCountData('DEL')
       }
       if(status==='OOD'){
-        const shipmentFilterData = this.state.shipment_data.filter(item=>{
-           return item.current_status==='Out for Delivery';
-         })
-         this.setState({shipment_data:shipmentFilterData})
+         this.fetchFilterCountData('OOD')
        }
 
        if(status==='INT'){
-        const shipmentFilterData = this.state.shipment_data.filter(item=>{
-           return item.current_status==='In Transit';
-         })
-         this.setState({shipment_data:shipmentFilterData})
+         this.fetchFilterCountData('INT')
        }
 
        if(status==='UND'){
-        const shipmentFilterData = this.state.shipment_data.filter(item=>{
-           return item.current_status==='"Undelivered"';
-         })
-         this.setState({shipment_data:shipmentFilterData})
+        this.fetchFilterCountData('UND')
        }
 
        if(status==='NFI'){
-        const shipmentFilterData = this.state.shipment_data.filter(item=>{
-           return item.current_status==='No Information Yet';
-         })
-         this.setState({shipment_data:shipmentFilterData})
+        this.fetchFilterCountData('NFI')
+       }
+       if(status==='DEX'){
+        this.fetchFilterCountData('DEX')
        }
       
     }
@@ -65,7 +84,6 @@ class Dashboard extends Component{
             headers: {'AUTHORIZATION': 'Bearer tTU3gFVUdP'}
           }) .then((response) => {
             const dataobj = [];
-            
             const result = response.data.data.forEach(element => {
               
               
@@ -101,7 +119,7 @@ class Dashboard extends Component{
               'current_status':element.current_status,'scan':element.scan
             })
           })
-            this.setState({shipment_data:dataobj})
+            this.setState({shipment_data:dataobj,copy_shipment_data:dataobj})
           })
           .catch((error) => {
             console.log(error);
@@ -156,11 +174,11 @@ class Dashboard extends Component{
             <div style={{backgroundColor:"rgb(255, 255, 255)"}}>
                 <Header />
                   <div className="count-container">
-                  <div onClick={() =>this.sortShipment('DEL')}><span >DEL</span><br/>{this.state.DEL}</div>
-                  <div onClick={() =>this.sortShipment('OOD')}>OOD <br/>{this.state.OOD}</div>
-                  <div onClick={() =>this.sortShipment('INT')}>INT <br/>{this.state.INT}</div>
-                  <div onClick={() =>this.sortShipment('DEX')}>DEX <br/>{this.state.DEX}</div>
-                  <div onClick={() =>this.sortShipment('NFI')}>NFI <br/>{this.state.NFI}</div>
+                  <div id="del" tabindex="1" onClick={() =>this.sortShipment('DEL')}><span >DEL</span><br/>{this.state.DEL}</div>
+                  <div tabindex="2" onClick={() =>this.sortShipment('OOD')}>OOD <br/>{this.state.OOD}</div>
+                  <div tabindex="3" onClick={() =>this.sortShipment('INT')}>INT <br/>{this.state.INT}</div>
+                  <div tabindex="4" onClick={() =>this.sortShipment('DEX')}>DEX <br/>{this.state.DEX}</div>
+                  <div tabindex="5" onClick={() =>this.sortShipment('NFI')}>NFI <br/>{this.state.NFI}</div>
                   </div>
                 <Row>
                     <Col offset="1" span="7">

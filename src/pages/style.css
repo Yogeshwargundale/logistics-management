@@ -22,4 +22,15 @@
     line-height: 60px;
     font-size: 25px;
     color: blue;
+    cursor: grab;
   }
+.count-container >div:focus{
+    background-color: blue;
+    color: white;
+
+}
+
+/* #del{
+    background-color: blue;
+    color: white;
+} */
