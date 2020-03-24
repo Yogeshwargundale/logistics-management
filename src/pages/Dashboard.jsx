@@ -2,6 +2,9 @@ import React, { Component} from 'react';
 import Header from '../components/Header'
 import { Row, Col, Table ,Timeline} from 'antd';
 import './style.css'
+import destination from '../images/destination.svg';
+import warehouse from '../images/warehouse.svg';
+import moment from 'moment';
 const BASE_URL='https://93870v1pgk.execute-api.ap-south-1.amazonaws.com/latest/shipments';
 const axios = require("axios");
 
@@ -12,6 +15,7 @@ class Dashboard extends Component{
         this.state = {
             shipment_data : [],
             copy_shipment_data : [],
+            timeline_data:[],
             DEL:0,
             INT:0,
             OOD:0,
@@ -28,7 +32,7 @@ class Dashboard extends Component{
           email: 'yogeshwargundale@gmail.com',
         },
         headers: {'AUTHORIZATION': 'Bearer tTU3gFVUdP'}
-      }) .then((response) => {debugger
+      }) .then((response) => {
         const dataobj = [];
         const result = response.data.data.filter((element,id)=> {
          return element.current_status_code===status 
@@ -73,6 +77,24 @@ class Dashboard extends Component{
         this.fetchFilterCountData('DEX')
        }
       
+    }
+
+
+    checkTimeline = (awbno)=>{
+      const timeline_info=[...this.state.shipment_data]
+     const result = timeline_info.filter(item=>{
+        return item.awbno===awbno
+      })
+
+      result.map(item=>{
+        return item.scan
+      })
+      
+      // this.setState({timeline_data:[...result[0].scan]},function () {
+      //   console.log(this.state.timeline_data);
+      //  })
+
+       this.setState({timeline_data:[...result[0].scan]})
     }
     componentDidMount(){
         axios({
@@ -157,16 +179,20 @@ class Dashboard extends Component{
                 title: 'STARTDATE',
                 dataIndex: 'pickup_date',
                 key: 'pickup_date',
+                render:(text,row)=>{
+                  return moment(row.pickup_date).format('DD/MM/YYYY')}
               },
               {
                 title: 'ETD',
                 dataIndex: 'etd',
                 key: 'etd',
+                render:(text,row)=>{return moment(row.etd).format('DD/MM/YYYY')}
               },
               {
                 title: 'STATUS',
                 dataIndex: 'current_status',
                 key: 'current_status',
+                render: (text,row) => <a style={{color:'green'}} onClick={()=>{this.checkTimeline(row.awbno)}}>{text}</a>,
               },
           ];
 
@@ -182,7 +208,27 @@ class Dashboard extends Component{
                   </div>
                 <Row>
                     <Col offset="1" span="7">
-                   
+                    {this.state.timeline_data.length>0?<div><img src={destination} alt="destination" /> <br/><span>|</span><br/><span>|</span></div>:null}
+                     {this.state.timeline_data.map((info)=>{
+                        return (
+                            <div>
+                            
+                            <Timeline>
+                                  <Timeline.Item>
+                                    <div  style={{borderStyle: 'ridge',}}>
+                                    <Row>
+                                      <Col span="10">{info.location}</Col>
+                                      <Col span="8">{moment(info.time).format('DD-MM-YYYY')}</Col>
+                                      <Col span="4">{moment(info.time).format('HH:MM')}</Col>
+                                    </Row>
+                                    </div>
+                                  </Timeline.Item>
+                            </Timeline>
+                            </div>
+                        )
+                     })
+                      }
+                      {this.state.timeline_data.length>0?<div><span>|</span><br/><span>|</span><br/><img src={warehouse} alt="warehouse" /></div>:null}
                     </Col>
                     <Col offset="1" />
                     <Col span="15">
@@ -191,7 +237,7 @@ class Dashboard extends Component{
                     columns={columns} 
                     size="small" 
                     scroll={{ x: 'max-content'}}
-                    />;
+                    />
                     </Col>
                 </Row>
             </div>

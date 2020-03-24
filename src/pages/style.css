@@ -29,7 +29,9 @@
     color: white;
 
 }
-
+.status-box{
+  border-style: 'ridge'
+}
 /* #del{
     background-color: blue;
     color: white;
